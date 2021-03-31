@@ -12,7 +12,7 @@ function init() {
       const msg = textbox1.value;
       const sender = $(".chat_box1 .nickname-box input[type=text]").val();
 
-      console.log(msg, sender);
+      sendMessasge1(msg, sender); // 메세지, 보낸사람, 채팅박스 번호
       //입력창 초기화
       textbox1.value = "";
     }
@@ -23,15 +23,16 @@ function init() {
       e.preventDefault();
 
       // 공백전송 방지
-      if (textbox2.value.trim() != "") {
-        return;
-      }
+      //   if (textbox2.value.trim() != "") {
+      //     return;
+      //   }
 
       const msg = textbox2.value;
       const sender = $(".chat_box2 .nickname-box input[type=text]").val();
 
-      sendMessasge(msg, sender);
-      console.log(msg, sender);
+      
+
+      sendMessasge2(msg, sender);
 
       //입력창 초기화
       textbox2.value = "";
@@ -40,25 +41,98 @@ function init() {
 }
 // })
 
-function sendMessasge(msg, sender) {
-  const chatLi = createMessageTag(msg, sender);
+// 1번이 보냄
+function sendMessasge1(msg, sender) {
+  // 보낸 채팅을 html틀에 맞춰줌
+  const chat = createMessageTag(msg, sender, "right");
 
-  $(".chat_box2 .chat_log").append(chatLi);
-  $(".chat_box2 .chat_log").scrollTop(
-    $(".chat_box2 .chat_log").prop("scrollHeight")
-  );
-  console.log(chatLi.html());
+  // 내가 보낸 메세지 내 채팅창에 출력
+  $(".chat_box1 .chat_log").append(chat);
+
+  //스크롤 내림
+  scrollchatbox(1);
+
+  // 데이터로 형식변환
+  const data = {
+    sender: sender,
+    msg: msg,
+    time: getTime()
+  };
+
+  // 데이터 전송
+  receiveData1(data);
 }
 
-// 메세지 태그 생성
-function createMessageTag(msg, sender) {
-  // div.sender 부터 가져와짐 li포함 안됨
+// 2번이 보냄
+function sendMessasge2(msg, sender) {
+  const chat = createMessageTag(msg, sender, "right");
+
+  $(".chat_box2 .chat_log").append(chat);
+
+  scrollchatbox(2);
+
+  const data = {
+    sender: sender,
+    msg: msg,
+    time: getTime()
+  };
+  
+  // 데이터 전송
+  receiveData2(data);
+}
+
+// 2번 데이터 수신
+function receiveData1(data) {
+  const chat = createMessageTag(data.msg, data.sender, "left");
+  $(".chat_box2 .chat_log").append(chat);
+  scrollchatbox(2);
+  console.log(data.time);
+}
+
+// 1번 데이터 수신
+function receiveData2(data) {
+  const chat = createMessageTag(data.msg, data.sender, "left");
+    
+  $(".chat_box1 .chat_log").append(chat);
+  scrollchatbox(1);
+  console.log(data.time);
+}
+
+// 메세지 틀짜기
+function createMessageTag(msg, sender, setLR) {
+  // ul(제일 마지막 객체)은 포함되지 않음.
   let chatLi = $("div.chat.format ul").clone();
 
+  chatLi.find("li").addClass(setLR);
   chatLi.find(".sender span").text(sender);
   chatLi.find(".message span").text(msg);
 
   return chatLi;
+}
+
+// 스크롤 기능
+function scrollchatbox(num) {
+  $(".chat_box" + num + " .chat_log").scrollTop(
+    $(".chat_box" + num + " .chat_log").prop("scrollHeight")
+  );
+}
+
+function getTime() {
+  var day = new Date();
+  var time =
+    day.getFullYear() +
+    "/" +
+    (day.getMonth() + 1) +
+    "/" +
+    day.getDate() +
+    " " +
+    day.getHours() +
+    ":" +
+    day.getMinutes() +
+    ":" +
+    day.getSeconds();
+
+    return time;
 }
 
 init();

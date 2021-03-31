@@ -88,9 +88,16 @@
     display: none;
 }
 
-li {
+li.right {
     list-style: none;
     margin: 10px 0 0 5px;
+    text-align: right;
+}
+
+li.left {
+    list-style: none;
+    margin: 10px 0 0 5px;
+    text-align: left;
 }
 
 .sender {
@@ -106,6 +113,5 @@ li {
     border-radius: 5px;
     display: inline;
     padding: 4px 10px 5px 10px;
-    
 }
 
