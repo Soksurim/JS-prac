@@ -1,4 +1,5 @@
-// const CHAT = (function(){
+// 채팅로그를 기록하는 json 전체 데이터
+let jsonData = [];
 
 // init()
 function init() {
@@ -30,8 +31,6 @@ function init() {
       const msg = textbox2.value;
       const sender = $(".chat_box2 .nickname-box input[type=text]").val();
 
-      
-
       sendMessasge2(msg, sender);
 
       //입력창 초기화
@@ -39,7 +38,6 @@ function init() {
     }
   });
 }
-// })
 
 // 1번이 보냄
 function sendMessasge1(msg, sender) {
@@ -56,8 +54,11 @@ function sendMessasge1(msg, sender) {
   const data = {
     sender: sender,
     msg: msg,
-    time: getTime()
+    time: getTime(),
   };
+
+  // 로그 기록
+  appendToJSON(data);
 
   // 데이터 전송
   receiveData1(data);
@@ -74,9 +75,12 @@ function sendMessasge2(msg, sender) {
   const data = {
     sender: sender,
     msg: msg,
-    time: getTime()
+    time: getTime(),
   };
-  
+
+  // 로그 기록
+  appendToJSON(data);
+
   // 데이터 전송
   receiveData2(data);
 }
@@ -92,7 +96,7 @@ function receiveData1(data) {
 // 1번 데이터 수신
 function receiveData2(data) {
   const chat = createMessageTag(data.msg, data.sender, "left");
-    
+
   $(".chat_box1 .chat_log").append(chat);
   scrollchatbox(1);
   console.log(data.time);
@@ -132,7 +136,29 @@ function getTime() {
     ":" +
     day.getSeconds();
 
-    return time;
+  return time;
 }
 
 init();
+
+// 로그 기록
+function appendToJSON(data) {
+  // 채팅기록을 전체 데이터에 추가
+  jsonData.push(data);
+
+  $(".showJson").text(JSON.stringify(jsonData));
+  //console.log(jsonData);
+}
+
+/// JSON 버튼 동작
+var json_content = document.querySelector(".showJson");
+document.querySelector(".show_hide").addEventListener("click", function (e) {
+  e.preventDefault();
+
+  if (json_content.classList.contains("hidden")) {
+    json_content.style.opacity = "1";
+  } else {
+    json_content.style.opacity = "0";
+  }
+  json_content.classList.toggle("hidden");
+});

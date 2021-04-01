@@ -115,3 +115,10 @@ li.left {
     padding: 4px 10px 5px 10px;
 }
 
+.showJson {
+    opacity: 0;
+    transition: 1s;
+    font-size: 10px;
+    position: relative;
+}
+
