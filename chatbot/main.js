@@ -19,11 +19,14 @@ function response(
   imageDB,
   packageName
 ) {
+  
+  update(sender, replier);
 
   // bot status
   if (msg.match("/ㅂ")) { bot_status(replier); } 
   else if (msg.startsWith("/타이머")) { timer(msg, replier); } 
-  else if (msg.match("/회원가입")){ register(replier, sender, imageDB, isGroupChat) }
+  else if (msg.match("/ㅎ")){ register(replier, sender, imageDB, isGroupChat); }
+  else if (msg.match("/ㅇㅈ")){ showUserList(replier); }
   else { replier.reply(sender + "님이 " + msg + "라고 보내셨습니다."); }
 }
 
@@ -85,6 +88,47 @@ function register(replier, sender, imageDB, isGroupChat) { // 이미 가입된 �
 
   if(isGroupChat) replier.reply("회원가입은 1:1채팅에서 진행해주세요!\nhttps://open.kakao.com/o/sDeNqs7c");
   else{
-    replier.reply("계정명 : " + sender + "\n프로필 암호 : " + imageDB.getProfileBase64() + "\n로 프로필을 생성합니다.");
-  }
+    replier.reply("계정명 : " + sender + "\n프로필 고유번호 : " + imageDB.getProfileBase64().substr(100,120)+ "\n로 프로필을 생성합니다.");
+    var parsed = JSON.parse(DataBase.setDataBase(sender + "_profile.txt", JSON.stringify({"name" : sender, "idkey" : imageDB.getProfileBase64()})));
+    replier.reply(parsed.name + "님 환영합니다!" );
+   
+    var profileList = JSON.parse(DataBase.getDataBase("profileList.txt"));
+    profileList.push({"id" : profileList.length, "name" : sender, "registerDate" : new Date(), "lastActive" : new Date()});
+    DataBase.setDataBase("profileList.txt", JSON.stringify(profileList));
+    
+   }
 }
+function showUserList(replier) {
+  var txt = "[유저목록]\n";
+  var db = JSON.parse(DataBase.getDataBase("profileList.txt"));
+  for(i in db ){
+    txt += i + ". " + db[i].name + " " + db[i].registerDate + "\n";
+  }
+  replier.reply(txt);
+}
+
+function update(sender, replier){
+  var db = JSON.parse(DataBase.getDataBase("profileList.txt"));
+  
+  for(data in db){
+    replier.reply(data);
+  }
+  
+  var db2 = db.filter( function(e){ return e.id == 4; });
+  db2[0].name = "AndAng";
+  db2[0].lastActive = new Date();
+  replier.reply(JSON.stringify(db2[0]));
+  // 수정하기
+  
+  
+  
+}
+
+
+
+
+
+
+
+
+
